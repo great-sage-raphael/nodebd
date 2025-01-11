@@ -3,16 +3,39 @@ const app=express();
 const port=3001;
 const cors=require('cors');
 const path=require('path');
-const { request } = require('http');
-const MongoClient=require('mongodb').MongoClient;
-var url="mongodb://localhost:27017/mydb";
-MongoClient.connect(url,function(err,db){
-    if(err) throw err;
-    console.log("database created");
-    db.close();
-    var dbo=db.db('mydb');
+
+
+const MongoClient = require('mongodb').MongoClient;
+
+// MongoDB connection URL
+const url = "mongodb://localhost:27017"; // MongoDB server URL
+const dbName = "mydb"; // Database name
+
+// Connect to MongoDB
+MongoClient.connect(url, function(err, client) {
+    if (err) {
+        console.log("Error connecting to MongoDB:", err);
+        return;
+    }
     
-})
+    console.log("Database connected successfully");
+
+    const db = client.db(dbName); // Get the reference to the database
+
+    // Optional: Check if the collection exists (it will be created when data is inserted)
+    db.createCollection('users', (err, res) => {
+        if (err) {
+            console.log("Error creating collection:", err);
+            return;
+        }
+        console.log('Collection created successfully');
+    });
+
+    client.close();
+});
+
+
+
 app.use(cors());
 app.use(express.json());
 
